@@ -7,6 +7,7 @@ class Photo {
   constructor() {
     this.searchQuery = '';
     this.page = 1;
+    this.per_page = 40;
   }
 
   async fetchPhotos() {
@@ -15,7 +16,7 @@ class Photo {
         key: this.#API_KEY,
         q: this.searchQuery,
         page: this.page,
-        per_page: 40,
+        per_page: this.per_page,
         image_type: 'photo',
         orientation: 'horizontal',
         safesearch: true,
@@ -25,7 +26,7 @@ class Photo {
     return response;
   }
 
-  pageCount() {
+  increasePageCount() {
     this.page += 1;
   }
 }

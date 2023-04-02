@@ -10,21 +10,26 @@ function renderPhotos(arr) {
         comments,
         downloads,
       }) =>
-        `<a href="${largeImageURL}">
+        `<a href="${largeImageURL}" class='gallery-link'>
         <div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" width='150' height='150'/>
+  <img src="${webformatURL}" alt="${tags}" loading="lazy" class='gallery-img'/>
   <div class="info">
     <p class="info-item">
-      <b>Likes: ${likes}</b>
+      <b>Likes</b>
+      <span>${likes}</span>
+      
     </p>
     <p class="info-item">
-      <b>Views: ${views}</b>
+      <b>Views</b>
+      <span>${views}</span>
     </p>
     <p class="info-item">
-      <b>Comments: ${comments}</b>
+      <b>Comments</b>
+      <span>${comments}</span>
     </p>
     <p class="info-item">
-      <b>Downloads: ${downloads}</b>
+      <b>Downloads</b>
+      <span>${downloads}</span>
     </p>
   </div>
 </div>
