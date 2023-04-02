@@ -3,19 +3,49 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Page title</title>
+    <title>Homework 11</title>
     <link rel="stylesheet" href="./sass/index.scss" />
   </head>
   <body>
-    <form class="search-form" id="search-form">
-      <input
-        type="text"
-        name="searchQuery"
-        autocomplete="off"
-        placeholder="Search images..."
-      />
-      <button type="submit">Search</button>
-    </form>
+    <div class="container">
+      <header>
+        <form class="search-form" id="search-form">
+          <input
+            class="search-form__input"
+            type="text"
+            name="searchQuery"
+            autocomplete="off"
+            placeholder="Search images..."
+          />
+          <button type="submit" class="search-form__button button">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              xml:space="preserve"
+              width="30"
+              height="30"
+              viewBox="0 0 48 48"
+            >
+              <path
+                fill="#546E7A"
+                d="M41.672 45.999c-.384 0-.769-.146-1.061-.438l-9.899-9.899a1.501 1.501 0 0 1 0-2.121l2.828-2.829a1.504 1.504 0 0 1 2.121 0l9.899 9.9a1.502 1.502 0 0 1 0 2.122l-2.828 2.828a1.498 1.498 0 0 1-1.06.437zm-7.071-14.727a.502.502 0 0 0-.354.146l-2.828 2.829a.5.5 0 0 0 0 .707l9.899 9.899a.5.5 0 0 0 .707 0l2.828-2.828a.502.502 0 0 0 0-.708l-9.899-9.9a.503.503 0 0 0-.353-.145zM18.5 35C9.402 35 2 27.598 2 18.5S9.402 2 18.5 2 35 9.402 35 18.5c0 3.703-1.198 7.202-3.466 10.119a.5.5 0 0 1-.789-.614A15.35 15.35 0 0 0 34 18.5C34 9.953 27.047 3 18.5 3S3 9.953 3 18.5 9.953 34 18.5 34c4.027 0 7.844-1.538 10.745-4.33a.5.5 0 0 1 .693.721A16.416 16.416 0 0 1 18.5 35z"
+              />
+              <g fill="#546E7A">
+                <path
+                  d="M33.894 31.064a.981.981 0 0 1 .462-.245l-2.925-2.924c-.198.272-.393.548-.607.807l2.717 2.716.353-.354zM31.065 33.894l.354-.354-2.717-2.716c-.259.215-.534.409-.807.607l2.925 2.924a.978.978 0 0 1 .245-.461z"
+                />
+              </g>
+            </svg>
+          </button>
+        </form>
+      </header>
+
+      <div class="gallery"></div>
+
+      <button type="button" class="load-more is-hidden button">
+        Load more
+      </button>
+    </div>
+
     <script src="index.js" type="module"></script>
   </body>
 </html>
