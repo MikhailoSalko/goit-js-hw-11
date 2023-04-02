@@ -39,10 +39,8 @@ async function handleSubmitFetchPhotos(e) {
       return;
     }
     Notify.success(`Hooray! We found ${result.data.totalHits} images.`);
-
     getGallery(result.data.hits);
     fetchPhoto.increasePageCount();
-    console.log(gallery.firstElementChild.getBoundingClientRect());
     loadMoreBtn.classList.remove('is-hidden');
   } catch (error) {
     console.log(error.message);
@@ -53,7 +51,6 @@ async function handleLoadMoreBtnFetchPhotos() {
   const result = await fetchPhoto.fetchPhotos();
   getGallery(result.data.hits);
   fetchPhoto.increasePageCount();
-  console.log(gallery.firstElementChild.getBoundingClientRect());
   const { height: cardHeight } =
     gallery.firstElementChild.getBoundingClientRect();
   window.scrollBy({
