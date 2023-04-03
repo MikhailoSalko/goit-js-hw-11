@@ -1,4 +1,4 @@
-function renderPhotos(arr) {
+function renderMarkup(arr) {
   const markup = arr
     .map(
       ({
@@ -40,4 +40,4 @@ function renderPhotos(arr) {
   return markup;
 }
 
-export { renderPhotos };
+export { renderMarkup };

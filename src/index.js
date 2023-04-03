@@ -4,7 +4,7 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Photo } from './js/fetchPhotos';
-import { renderPhotos } from './js/renderMarkup';
+import { renderMarkup } from './js/renderMarkup';
 
 const form = document.querySelector('.search-form');
 const loadMoreBtn = document.querySelector('.load-more');
@@ -31,15 +31,15 @@ async function handleSubmitFetchPhotos(e) {
   gallery.innerHTML = '';
   fetchPhoto.page = 1;
   try {
-    const result = await fetchPhoto.fetchPhotos();
-    if (result.data.totalHits === 0) {
+    const photo = await fetchPhoto.fetchPhotos();
+    if (photo.data.totalHits === 0) {
       Notify.failure(
         '"Sorry, there are no images matching your search query. Please try again."'
       );
       return;
     }
-    Notify.success(`Hooray! We found ${result.data.totalHits} images.`);
-    getGallery(result.data.hits);
+    Notify.success(`Hooray! We found ${photo.data.totalHits} images.`);
+    renderGallery(photo.data.hits);
     fetchPhoto.increasePageCount();
     loadMoreBtn.classList.remove('is-hidden');
   } catch (error) {
@@ -48,8 +48,8 @@ async function handleSubmitFetchPhotos(e) {
 }
 
 async function handleLoadMoreBtnFetchPhotos() {
-  const result = await fetchPhoto.fetchPhotos();
-  getGallery(result.data.hits);
+  const photo = await fetchPhoto.fetchPhotos();
+  renderGallery(photo.data.hits);
   fetchPhoto.increasePageCount();
   const { height: cardHeight } =
     gallery.firstElementChild.getBoundingClientRect();
@@ -57,17 +57,16 @@ async function handleLoadMoreBtnFetchPhotos() {
     top: cardHeight * 1.5,
     behavior: 'smooth',
   });
-  totalPages = result.data.totalHits / fetchPhoto.per_page;
+  totalPages = photo.data.totalHits / fetchPhoto.per_page;
   if (totalPages < fetchPhoto.page) {
     Notify.failure(
       `We're sorry, but you've reached the end of search results.`
     );
     loadMoreBtn.classList.add('is-hidden');
-    return;
   }
 }
 
-function getGallery(arr) {
-  gallery.insertAdjacentHTML('beforeend', renderPhotos(arr));
+function renderGallery(arr) {
+  gallery.insertAdjacentHTML('beforeend', renderMarkup(arr));
   lightbox.refresh();
 }
