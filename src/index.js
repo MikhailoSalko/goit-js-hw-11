@@ -1,13 +1,13 @@
-// import axios from 'axios';
 import './css/styles.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Photo } from './js/fetchPhotos';
 import { renderMarkup } from './js/renderMarkup';
+import InfiniteAjaxScroll from '@webcreate/infinite-ajax-scroll';
 
 const form = document.querySelector('.search-form');
-const loadMoreBtn = document.querySelector('.load-more');
+// const loadMoreBtn = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
 const fetchPhoto = new Photo();
 const lightbox = new SimpleLightbox('.gallery a', {
@@ -17,7 +17,7 @@ const lightbox = new SimpleLightbox('.gallery a', {
 let totalPages = 0;
 
 form.addEventListener('submit', handleSubmitFetchPhotos);
-loadMoreBtn.addEventListener('click', handleLoadMoreBtnFetchPhotos);
+// loadMoreBtn.addEventListener('click', handleLoadMoreBtnFetchPhotos);
 
 async function handleSubmitFetchPhotos(e) {
   e.preventDefault();
@@ -27,7 +27,7 @@ async function handleSubmitFetchPhotos(e) {
   if (fetchPhoto.searchQuery === '') {
     return;
   }
-  loadMoreBtn.classList.add('is-hidden');
+  // loadMoreBtn.classList.add('is-hidden');
   gallery.innerHTML = '';
   fetchPhoto.page = 1;
   try {
@@ -38,10 +38,20 @@ async function handleSubmitFetchPhotos(e) {
       );
       return;
     }
+
     Notify.success(`Hooray! We found ${photo.data.totalHits} images.`);
     renderGallery(photo.data.hits);
     fetchPhoto.increasePageCount();
-    loadMoreBtn.classList.remove('is-hidden');
+
+    const infiniteScroll = new InfiniteAjaxScroll('.gallery', {
+      item: '.gallery-link',
+      next: '.next',
+      pagination: '.pagination',
+    });
+    infiniteScroll.on('load', handleLoadMoreBtnFetchPhotos);
+    infiniteScroll.on('last', handleLoadMoreBtnFetchPhotos);
+
+    // loadMoreBtn.classList.remove('is-hidden');
   } catch (error) {
     console.log(error.message);
   }
@@ -58,11 +68,13 @@ async function handleLoadMoreBtnFetchPhotos() {
     behavior: 'smooth',
   });
   totalPages = photo.data.totalHits / fetchPhoto.per_page;
+
   if (totalPages < fetchPhoto.page) {
     Notify.failure(
       `We're sorry, but you've reached the end of search results.`
     );
-    loadMoreBtn.classList.add('is-hidden');
+    // infiniteScroll.unbind();
+    // loadMoreBtn.classList.add('is-hidden');
   }
 }
 
