@@ -23,6 +23,7 @@ const infiniteScroll = new InfiniteAjaxScroll('.gallery', {
 });
 
 form.addEventListener('submit', handleSubmitFetchPhotos);
+infiniteScroll.on('loaded', handleLoadMoreBtnFetchPhotos);
 // loadMoreBtn.addEventListener('click', handleLoadMoreBtnFetchPhotos);
 
 async function handleSubmitFetchPhotos(e) {
@@ -44,13 +45,10 @@ async function handleSubmitFetchPhotos(e) {
       );
       return;
     }
-
     Notify.success(`Hooray! We found ${photo.data.totalHits} images.`);
     renderGallery(photo.data.hits);
     fetchPhoto.increasePageCount();
     infiniteScroll.bind();
-    infiniteScroll.on('load', handleLoadMoreBtnFetchPhotos);
-
     // loadMoreBtn.classList.remove('is-hidden');
   } catch (error) {
     console.log(error.message);
@@ -70,9 +68,11 @@ async function handleLoadMoreBtnFetchPhotos() {
   totalPages = photo.data.totalHits / fetchPhoto.per_page;
   if (totalPages < fetchPhoto.page) {
     infiniteScroll.unbind();
-    Notify.failure(
-      `We're sorry, but you've reached the end of search results.`
-    );
+    setTimeout(() => {
+      Notify.failure(
+        `We're sorry, but you've reached the end of search results.`
+      );
+    }, 500);
     // loadMoreBtn.classList.add('is-hidden');
   }
 }
