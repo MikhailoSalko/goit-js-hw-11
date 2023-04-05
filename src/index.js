@@ -15,6 +15,12 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
 });
 let totalPages = 0;
+const infiniteScroll = new InfiniteAjaxScroll('.gallery', {
+  item: '.gallery-link',
+  next: '.next',
+  pagination: '.pagination',
+  bind: false,
+});
 
 form.addEventListener('submit', handleSubmitFetchPhotos);
 // loadMoreBtn.addEventListener('click', handleLoadMoreBtnFetchPhotos);
@@ -42,14 +48,8 @@ async function handleSubmitFetchPhotos(e) {
     Notify.success(`Hooray! We found ${photo.data.totalHits} images.`);
     renderGallery(photo.data.hits);
     fetchPhoto.increasePageCount();
-
-    const infiniteScroll = new InfiniteAjaxScroll('.gallery', {
-      item: '.gallery-link',
-      next: '.next',
-      pagination: '.pagination',
-    });
+    infiniteScroll.bind();
     infiniteScroll.on('load', handleLoadMoreBtnFetchPhotos);
-    infiniteScroll.on('last', handleLoadMoreBtnFetchPhotos);
 
     // loadMoreBtn.classList.remove('is-hidden');
   } catch (error) {
@@ -68,12 +68,11 @@ async function handleLoadMoreBtnFetchPhotos() {
     behavior: 'smooth',
   });
   totalPages = photo.data.totalHits / fetchPhoto.per_page;
-
   if (totalPages < fetchPhoto.page) {
+    infiniteScroll.unbind();
     Notify.failure(
       `We're sorry, but you've reached the end of search results.`
     );
-    // infiniteScroll.unbind();
     // loadMoreBtn.classList.add('is-hidden');
   }
 }
