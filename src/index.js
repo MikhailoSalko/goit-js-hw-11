@@ -4,26 +4,38 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Photo } from './js/fetchPhotos';
 import { renderMarkup } from './js/renderMarkup';
-import InfiniteAjaxScroll from '@webcreate/infinite-ajax-scroll';
+// import InfiniteAjaxScroll from '@webcreate/infinite-ajax-scroll';
 
-const form = document.querySelector('.search-form');
 // const loadMoreBtn = document.querySelector('.load-more');
+const form = document.querySelector('.search-form');
 const gallery = document.querySelector('.gallery');
 const fetchPhoto = new Photo();
 const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
   captionsData: 'alt',
 });
+let lastImage = null;
 let totalPages = 0;
-const infiniteScroll = new InfiniteAjaxScroll('.gallery', {
-  item: '.gallery-link',
-  next: '.next',
-  pagination: '.pagination',
-  bind: false,
-});
+const infiniteScrollObserver = new IntersectionObserver(
+  ([entry], observer) => {
+    if (entry.isIntersecting) {
+      observer.unobserve(entry.target);
+      handleFetchForInfiniteScrollObserver();
+    }
+  },
+  {
+    threshold: 0.1,
+  }
+);
+// const infiniteScroll = new InfiniteAjaxScroll('.gallery', {
+//   item: '.gallery-link',
+//   next: '.next',
+//   pagination: '.pagination',
+//   bind: false,
+// });
 
 form.addEventListener('submit', handleSubmitFetchPhotos);
-infiniteScroll.on('loaded', handleLoadMoreBtnFetchPhotos);
+// infiniteScroll.on('loaded', handleLoadMoreBtnFetchPhotos);
 // loadMoreBtn.addEventListener('click', handleLoadMoreBtnFetchPhotos);
 
 async function handleSubmitFetchPhotos(e) {
@@ -48,8 +60,14 @@ async function handleSubmitFetchPhotos(e) {
     Notify.success(`Hooray! We found ${photo.data.totalHits} images.`);
     renderGallery(photo.data.hits);
     fetchPhoto.increasePageCount();
-    infiniteScroll.bind();
+    lastImage = document.querySelector('.gallery-link:last-child');
+    if (lastImage) {
+      infiniteScrollObserver.observe(lastImage);
+    }
+
+    // infiniteScroll.bind();
     // loadMoreBtn.classList.remove('is-hidden');
+    return lastImage;
   } catch (error) {
     console.log(error.message);
   }
@@ -67,13 +85,30 @@ async function handleLoadMoreBtnFetchPhotos() {
   });
   totalPages = photo.data.totalHits / fetchPhoto.per_page;
   if (totalPages < fetchPhoto.page) {
-    infiniteScroll.unbind();
+    // infiniteScroll.unbind();
+    Notify.failure(
+      `We're sorry, but you've reached the end of search results.`
+    );
+    // loadMoreBtn.classList.add('is-hidden');
+  }
+}
+
+async function handleFetchForInfiniteScrollObserver() {
+  const photo = await fetchPhoto.fetchPhotos();
+  renderGallery(photo.data.hits);
+  fetchPhoto.increasePageCount();
+  lastImage = document.querySelector('.gallery-link:last-child');
+  if (lastImage) {
+    infiniteScrollObserver.observe(lastImage);
+  }
+  totalPages = photo.data.totalHits / fetchPhoto.per_page;
+  if (totalPages < fetchPhoto.page) {
+    infiniteScrollObserver.unobserve(lastImage);
     setTimeout(() => {
       Notify.failure(
         `We're sorry, but you've reached the end of search results.`
       );
-    }, 500);
-    // loadMoreBtn.classList.add('is-hidden');
+    }, 1000);
   }
 }
 
