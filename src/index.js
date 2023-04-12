@@ -83,7 +83,7 @@ async function handleLoadMoreBtnFetchPhotos() {
     top: cardHeight * 1.5,
     behavior: 'smooth',
   });
-  totalPages = photo.data.totalHits / fetchPhoto.per_page;
+  totalPages = photo.data.totalHits / fetchPhoto.perPage;
   if (totalPages < fetchPhoto.page) {
     // infiniteScroll.unbind();
     Notify.failure(
@@ -101,7 +101,7 @@ async function handleFetchForInfiniteScrollObserver() {
   if (lastImage) {
     infiniteScrollObserver.observe(lastImage);
   }
-  totalPages = photo.data.totalHits / fetchPhoto.per_page;
+  totalPages = photo.data.totalHits / fetchPhoto.perPage;
   if (totalPages < fetchPhoto.page) {
     infiniteScrollObserver.unobserve(lastImage);
     setTimeout(() => {
